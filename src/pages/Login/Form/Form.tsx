@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate, useHref } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import TextField from "@mui/material/TextField";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   FormSubmitEvt,
   IconMouseEvt,
@@ -22,7 +24,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { instanceLogin } from "../../../api/instance";
 import { propsForm } from "../../../ts/interface/data.interface";
 
-const Form = (props: propsForm) => {
+const Form = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formState, setFormState] = React.useState({
@@ -112,9 +114,11 @@ const Form = (props: propsForm) => {
     evt.preventDefault();
   };
 
+  const notify = () => toast("Tekshiryapmiz! Kutib turing");
   // FORM SUBMIT POST
   const handleSubmit = (evt: FormSubmitEvt) => {
     evt.preventDefault();
+    notify()
     instanceLogin
       .post("/api/login", {
         email: formState.email,
@@ -133,7 +137,6 @@ const Form = (props: propsForm) => {
             passwordInputError: false,
           });
 
-          props.checkUser(true)
           window.localStorage.setItem("access_token", res.data.token);
           navigate("/home");
           dispatch({ type: "AUTH", payload: true });
@@ -141,7 +144,6 @@ const Form = (props: propsForm) => {
       })
       .catch((err) => {
         if (err.response.data.error) {
-          props.checkUser(true)
           setInputErrorText({
             ...inputErrorText,
             emailErrorText: "Email is not defined",

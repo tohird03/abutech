@@ -6,15 +6,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
-  const [checkUser, setCheckUser] = React.useState(false)
-  const notify = () => toast("Tekshiryapmiz! Kutib turing");
-
-  useEffect(() => {
-    if(checkUser) {
-      notify()
-    }
-  }, [checkUser])
-
   return (
     <Box
       sx={{
@@ -28,7 +19,7 @@ const Login = () => {
         backgroundSize: "cover",
       }}
     >
-      <Form checkUser={setCheckUser} />
+      <Form />
       <ToastContainer autoClose={2000} />
     </Box>
   );
