@@ -1,18 +1,65 @@
-import * as React from 'react';
-import {AppBar, Box, CssBaseline, Divider, Drawer, IconButton, InboxIcon,
-    List, ListItem, ListItemButton, ListItemIcon, ListItemText, MailIcon, MenuIcon, Toolbar, Typography,
-} from "./Sidebar.imported"
-
-import { sidebarProps } from '../../interface/sidebar.interface';
+import * as React from "react";
+import {
+  AppBar,
+  Box,
+  CssBaseline,
+  Divider,
+  Drawer,
+  IconButton,
+  InboxIcon,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  MailIcon,
+  MenuIcon,
+  Toolbar,
+  Typography,
+} from "./Sidebar.imported";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import { sidebarProps } from "../../ts/interface/sidebar.interface";
+import { TextField } from "@mui/material";
+import { InputChangeEvt, InputKeyUp } from "../../ts/types/const.types";
 
 const drawerWidth = 240;
+const citys = [
+  "Tashkent",
+  "Samarqand",
+  "Qarshi",
+  "Buxoro",
+  "Navoiy",
+  "Andijon",
+  "Farg'ona",
+  "Namangan",
+  "Jizzax",
+  "Sirdaryo",
+  "Termiz",
+];
 
 export default function ResponsiveDrawer(props: sidebarProps) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleClickCity = (text: string) => {
+    props.setCity(text);
+  };
+
+  const handleChangeSearch = (evt: InputChangeEvt) => {
+    setSearch(evt.target.value)
+  }
+
+  const handelSearch = (evt: React.KeyboardEvent<HTMLInputElement>) => {
+    if (evt.keyCode == 13) {
+      props.setCity(search);
+
+      setSearch("")
+    }
   };
 
   const drawer = (
@@ -20,24 +67,15 @@ export default function ResponsiveDrawer(props: sidebarProps) {
       <Toolbar />
       <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
+        {citys?.map((text, index) => (
+          <ListItem
+            onClick={() => handleClickCity(text)}
+            key={text}
+            disablePadding
+          >
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <Brightness4Icon />
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
@@ -47,14 +85,17 @@ export default function ResponsiveDrawer(props: sidebarProps) {
     </div>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
+          backgroundColor: "white",
+          color: "#333",
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
         }}
@@ -65,13 +106,31 @@ export default function ResponsiveDrawer(props: sidebarProps) {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Responsive drawer
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Typography variant="h6" noWrap component="div">
+              {props.city}
+            </Typography>
+
+            <TextField
+              value={search}
+              onKeyUp={handelSearch}
+              onChange={handleChangeSearch}
+              id="outlined-basic"
+              label="Search city"
+              variant="outlined"
+            />
+          </Box>
         </Toolbar>
       </AppBar>
       <Box
@@ -88,8 +147,11 @@ export default function ResponsiveDrawer(props: sidebarProps) {
             keepMounted: true,
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
         >
           {drawer}
@@ -97,8 +159,11 @@ export default function ResponsiveDrawer(props: sidebarProps) {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
           open
         >
@@ -107,36 +172,14 @@ export default function ResponsiveDrawer(props: sidebarProps) {
       </Box>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        sx={{
+          flexGrow: 1,
+          position: "relative",
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+        }}
       >
         <Toolbar />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-          enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-          Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-          Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-          nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-          feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-          consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-          sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-          eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-          neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-          tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-          sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-          tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-          et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-          tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+        {props.children}
       </Box>
     </Box>
   );
